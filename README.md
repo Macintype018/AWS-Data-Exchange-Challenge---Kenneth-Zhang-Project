@@ -30,7 +30,7 @@ or excessive speeding. Some shared micromobility providers report that they can 
 telemetry data to determine if a scooter has been left in an upright vs tipped over position.
 
 • Data Protection - Mechanisms for guarding against unauthorized access, including practices for
-preventing unauthorized entities from accessing data. Also includes methods for diminishing the
+preventing unauthorized entities from accessing data. This also includes the methods used for diminishing the
 usefulness of stolen data should a system be breached.
 
 • Verifiable Data Audit - Tools or practices that automatically and routinely capture, log, and
@@ -44,4 +44,8 @@ We specifically chose the United Arab Emirates (UAE) for change-point detection 
 each of the recorded data columns. Although the FBProphet is robust against missing datapoints and positions, it is beneficial to have as many actual recorded data points.
 Since the Prophet forecasts for time series data based on an additive model where non-linear trends are fit with yearly, weekly, and daily, seasonality, with the addition of
 holiday effects, it would be useful for us to use more data points.
+
+Simply put, the FBProphet uses time as a regressor and fits several similar linear and non-linear functions of time as components.
+The first function fits the trend and models non-periodic changes. The second function fits seasonality with periodic changes present. The third fits ties in effects
+of holidays on potentially irregular schedules for greater than or equal to one day. The last function covers idiosyncratic changes not accommodated by the model. Prophet is essentially “framing the forecasting problem as a curve-fitting exercise” rather than looking explicitly at the time based dependence of each observation.
 
