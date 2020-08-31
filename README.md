@@ -42,3 +42,6 @@ approved manner.
 In this project, we will use mobility data provided by Google Inc.
 We specifically chose the United Arab Emirates (UAE) for change-point detection and analysis as it was a country that had one of the least amounts of missing values in 
 each of the recorded data columns. Although the FBProphet is robust against missing datapoints and positions, it is beneficial to have as many actual recorded data points.
+Since the Prophet forecasts for time series data based on an additive model where non-linear trends are fit with yearly, weekly, and daily, seasonality, with the addition of
+holiday effects, it would be useful for us to use more data points.
+
