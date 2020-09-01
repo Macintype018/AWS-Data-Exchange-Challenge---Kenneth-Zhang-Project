@@ -39,8 +39,8 @@ approved manner.
 
 
 ## Using the FBProphet for Change-point Detection in Google Mobility Data/Reports of Different Countries
-In this project, we will use mobility data provided by Google Inc.
-We specifically chose the United Arab Emirates (UAE) for change-point detection and analysis as it was a country that had one of the least amounts of missing values in 
+In this project, I will used mobility data provided by Google Inc.
+I specifically chose the United Arab Emirates (UAE) for change-point detection and analysis as it was a country that had one of the least amounts of missing values in 
 each of the recorded data columns. Although the FBProphet is robust against missing datapoints and positions, it is beneficial to have as many actual recorded data points.
 Since the Prophet forecasts for time series data based on an additive model where non-linear trends are fit with yearly, weekly, and daily, seasonality, with the addition of
 holiday effects, it would be useful for us to use more data points.
@@ -60,9 +60,86 @@ fig = pro_change.plot(forecast);
 a = add_changepoints_to_plot(fig.gca(), pro_change, forecast)
 ```
 The Python code above uses the `.add_seasonality` function to add the monthly seasonality to the model. 
+I analyzed two columns of data, one for 'retail_and_recreation_percent_change_from_baseline' and the other for 'grocery_and_pharmacy_percent_change_from_baseline'.
+The Jupyter Notebooks for the according columns were uploaded separately.
 
-## Building a LSTM-based RNN for Time Series Prediction
-Since the data is a time series, we can use a LSTM-based RNN to forecast the time series.
+## Building a Multi-Layer Perceptron Artificial Neural Network Predicting Future Mobility Data
+The core features of the model will include an input layer with shape (1480, 1) which is the shape of the input data, a Dense layer with 64 filters and a 'relu' 
+activation function with a 'normal' kernel initializer, another Dense layer with 64 filters and relu activation, and an output layer.
+The loss function is 'mse', and I also used the 'RMSprop' as optimizer, and accuracy as the metric. 
+Before importing the x-values though, I had to adjust the dates like this:
 
+```
+from sklearn.model_selection import train_test_split
+x = uaeMobilityData['date']
+y = uaeMobilityData['retail_and_recreation_percent_change_from_baseline']
+x = pd.to_numeric(uaeMobilityData['date'],errors='coerce')
+x = pd.factorize(uaeMobilityData['date'])[0].reshape(-1, 1)
+```
+
+This is so that the dates are recognized as numeric values, so that the regression can actually work. 
+Also, I needed to reshape the data, as it was only 1-dimensional at the time.
+
+Using the `sklearn.preprocessing.scale` function, I normalized the dates of the data. `preprocessing.StandardScaler().fit` function returns a scalar with the normalized mean and standard deviation of the training data, which I applied to the test data using `scalar.transform` function. 
+
+The code shown below is how I preprocessed and normalized the `x_train` data. 
+
+```
+x_train_scaled = preprocessing.scale(x_train) 
+scaler = preprocessing.StandardScaler().fit(x_train) 
+x_test_scaled = scaler.transform(x_test)
+```
+
+I then built the model using the components and layers introduced in the previous paragraph in this section.
+The code below, in Python 3, shows how I did it.
+
+```
+model = Sequential() 
+model.add(Dense(64, kernel_initializer = 'normal', activation = 'relu',input_shape = (1480, 1))) 
+model.add(Dense(64, activation = 'relu')) 
+model.add(Dense(1))
+```
+
+I then compiled the model using the loss function, optimizer, and metrics I before:
+
+```
+model.compile(
+   loss = 'mse', 
+   optimizer = RMSprop(), 
+   metrics = ['mean_absolute_error']
+)
+```
+, and the then fitted the model and analyzed and printed the overall test loss and accuracy:
+
+```
+history = model.fit(
+   x_train_scaled, y_train,    
+   batch_size=128, 
+   epochs = 500, 
+   verbose = 1, 
+   validation_split = 0.3,
+   callbacks = [EarlyStopping(monitor = 'val_loss', patience = 20)]
+)
+
+score = model.evaluate(x_test_scaled, y_test, verbose = 0) 
+print('Test loss:', score[0]) 
+print('Test accuracy:', score[1])
+```
+
+Easily, I could make predictions:
+
+```
+prediction = model.predict(x_test_scaled) 
+print(prediction.flatten()) 
+print(y_test)
+```
+
+## Conclusion
+
+In conclusion, we can clearly visualize how mobility data trends altered during the COVID-19 Pandemic. We can see through the change-point detection program whether policies implemented by the United Arab Emirates did slow activity down in the country. Using the Mobility Data, we can see which countries would survive during times and whether they deemed to be essential or not. Of course, these programs are versatile and can implemented for any country.
+In addition, using the Regression Predicting using a Multi-Layer Perceptron Artificial Neural Network, we can predict the future values of the mobility data for the UAE. 
+These visualizations can help countries whether policies that were implemented slowed the spread and activity of the citizens within the country, as well as if the activity was correlated to an increase in cases or deaths. 
+
+### Hopefully you enjoyed my project!
 
 
