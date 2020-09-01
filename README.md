@@ -49,3 +49,17 @@ Simply put, the FBProphet uses time as a regressor and fits several similar line
 The first function fits the trend and models non-periodic changes. The second function fits seasonality with periodic changes present. The third fits ties in effects
 of holidays on potentially irregular schedules for greater than or equal to one day. The last function covers idiosyncratic changes not accommodated by the model. Prophet is essentially “framing the forecasting problem as a curve-fitting exercise” rather than looking explicitly at the time based dependence of each observation.
 
+I observed the change-points of the data depending on the yearly, monthly, and daily seasonality. Since daily and yearly seasonality are able to give us a general overview 
+and forecast of what mobility data for specific countries may look like, we can use it to do a general forecast. In order to get a more detailed and consistent change-point analysis, data such as COVID-19 Mobility Data which is taken in weekly and monthly intervals, should be analyzed weekly or monthly. Monthly and weekly seasonalities were also added manually using the `.add_seasonality` function in python. 
+
+```python
+pro_change = Prophet(changepoint_range = 0.9)
+pro_change.add_seasonality(period = 30.5, name = 'monthly', fourier_order = 5)
+forecast = pro_change.fit(train_dataset).predict(future)
+fig = pro_change.plot(forecast);
+a = add_changepoints_to_plot(fig.gca(), pro_change, forecast)
+```
+The Python code above uses the `.add_seasonality` function to add the monthly seasonality to the model. 
+
+
+
