@@ -61,5 +61,8 @@ a = add_changepoints_to_plot(fig.gca(), pro_change, forecast)
 ```
 The Python code above uses the `.add_seasonality` function to add the monthly seasonality to the model. 
 
+## Building a LSTM-based RNN for Time Series Prediction
+Since the data is a time series, we can use a LSTM-based RNN to forecast the time series.
+
 
 
